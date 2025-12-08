@@ -1,6 +1,6 @@
 spring:
   application:
-    name: batch-demo
+    name: kafka-streams-demo
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: ${ORACLE_DRIVER}
@@ -8,7 +8,7 @@ spring:
     username: ${ORACLE_DB_USER}
     password: ${ORACLE_DB_PASS}
     hikari:
-      pool-name: BatchDemoHikariPool
+      pool-name: KafkaStreamsHikariPool
       connection-timeout: 30000
       minimum-idle: 5
       maximum-pool-size: 20
