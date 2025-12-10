@@ -28,3 +28,79 @@ spring:
         format_sql: false
         jdbc:
           batch_size: 50
+  cloud:
+    function:
+      definition: feeItemRouter;paymentRouter;feeItemDlqRouter;paymentDlqRouter
+    stream:
+      kafka:
+        binder:
+          consumer-properties:
+            auto.offset.reset: earliest
+            key.deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+            value.deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+            max.poll.interval.ms: 300000
+            session.timeout.ms: 30000
+            heartbeat.interval.ms: 3000
+            enable.auto.commit: false
+            spring.json.trusted.packages: '*'
+            spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+            spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        bindings:
+          feeItemRouter-in-0:
+            consumer:
+              ack-mode: record
+              enable-dlq: true
+              dlq-name: fee-item-dlt
+          paymentRouter-in-0:
+            consumer:
+              ack-mode: record
+              enable-dlq: true
+              dlq-name: payment-dlt
+          feeItemDlqRouter-in-0:
+            consumer:
+              ack-mode: record
+              enable-dlq: true
+              dlq-name: fee-item-dlt
+          paymentDlqRouter-in-0:
+            consumer:
+              ack-mode: record
+              enable-dlq: true
+              dlq-name: payment-dlt
+      bindings:
+        sendFeeItemEvent-out-0:
+          destination: fee-item
+        sendPaymentEvent-out-0:
+          destination: payment
+        feeItemRouter-in-0:
+          destination: fee-item
+          group: ${application.messaging.consumer-group-fee-item}
+          consumer:
+            max-attempts: 1
+        paymentRouter-in-0:
+          destination: payment
+          group: ${application.messaging.consumer-group-fee-payment}
+          consumer:
+            max-attempts: 1
+        feeItemDlqRouter-in-0:
+          destination: fee-item-dlt
+          group: ${application.messaging.consumer-group-fee-item-dlq}
+          consumer:
+            max-attempts: 3
+            back-off-initial-interval: 2000
+            back-off-multiplier: 3
+            back-off-max-interval: 10000
+        paymentDlqRouter-in-0:
+          destination: payment-dlt
+          group: ${application.messaging.consumer-group-fee-payment-dlq}
+          consumer:
+            max-attempts: 3
+            back-off-initial-interval: 2000
+            back-off-multiplier: 3
+            back-off-max-interval: 10000
+
+application:
+  messaging:
+    consumer-group-fee-item: fee-item-group
+    consumer-group-fee-item-dlq: fee-item-group-dlt
+    consumer-group-fee-payment: fee-payment-group
+    consumer-group-fee-payment-dlq: fee-payment-group-dlt
