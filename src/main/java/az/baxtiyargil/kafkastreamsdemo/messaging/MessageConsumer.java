@@ -1,0 +1,27 @@
+package az.baxtiyargil.kafkastreamsdemo.messaging;
+
+import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging.ConsumerFunctionNames;
+import az.baxtiyargil.kafkastreamsdemo.messaging.event.Event;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Component;
+
+import java.util.function.Consumer;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class MessageConsumer {
+
+    private static final String LOG_FORMAT = "Received event: {}, payload: {}";
+
+    @Bean(ConsumerFunctionNames.FEE_ITEM_RECEIVED_EVENT_CONSUMER)
+    public Consumer<Message<Event>> onFeeItemReceivedEvent() {
+        return message -> {
+            log.info(LOG_FORMAT, message.getPayload().getType(), message.getPayload());
+        };
+    }
+
+}
