@@ -11,6 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.SERIAL_VERSION_UID;
 
 @Data
 @Entity
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class OrderItem implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = SERIAL_VERSION_UID;
 
     @NotNull
     @EmbeddedId

@@ -8,8 +8,8 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Locale;
 import java.util.Objects;
+import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.SERIAL_VERSION_UID;
 
 @Data
 @Entity
@@ -17,7 +17,7 @@ import java.util.Objects;
 public class Order implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = SERIAL_VERSION_UID;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_id_seq_gen")
