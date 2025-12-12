@@ -1,9 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.Hibernate;
@@ -39,6 +36,10 @@ public class OrderItem implements Serializable {
 
     @Column(name = "shipment_id")
     private Long shipmentId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @Override
     public boolean equals(Object o) {

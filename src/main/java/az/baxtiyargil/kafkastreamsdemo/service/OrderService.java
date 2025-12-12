@@ -1,18 +1,21 @@
 package az.baxtiyargil.kafkastreamsdemo.service;
 
-import az.baxtiyargil.kafkastreamsdemo.domain.OrderItem;
-import az.baxtiyargil.kafkastreamsdemo.repository.OrderItemRepository;
+import az.baxtiyargil.kafkastreamsdemo.mapper.OrderMapper;
+import az.baxtiyargil.kafkastreamsdemo.model.CreateOrderRequest;
+import az.baxtiyargil.kafkastreamsdemo.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class OrderItemService {
+public class OrderService {
 
-    private final OrderItemRepository orderItemRepository;
+    private final OrderMapper orderMapper;
+    private final OrderRepository orderRepository;
 
-    public List<OrderItem> findByOrderId(Long orderId) {
-        return orderItemRepository.findByIdOrderId(orderId);
+    public void create(CreateOrderRequest request) {
+        var order = orderMapper.toOrder(request);
+        orderRepository.save(order);
     }
+
 }

@@ -2,7 +2,8 @@ package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,11 +16,7 @@ public class OrderItemId implements Serializable {
     @Serial
     private static final long serialVersionUID = SERIAL_VERSION_UID;
 
-    @NotNull
-    @Column(name = "order_id", unique = true, nullable = false, updatable = false)
-    private Long orderId;
-
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "line_item_id", unique = true, nullable = false, updatable = false)
     private Long lineItemId;
 }

@@ -8,6 +8,7 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.SERIAL_VERSION_UID;
 
@@ -41,6 +42,9 @@ public class Order implements Serializable {
     @NotNull
     @Column(name = "store_id", nullable = false)
     private Long storeId;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
 
     @PrePersist
     public void prePersist() {
