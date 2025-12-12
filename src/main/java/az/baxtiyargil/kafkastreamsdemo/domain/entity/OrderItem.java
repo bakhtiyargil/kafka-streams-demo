@@ -1,4 +1,4 @@
-package az.baxtiyargil.kafkastreamsdemo.domain;
+package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -25,11 +25,11 @@ public class OrderItem implements Serializable {
     private OrderItemId id;
 
     @NotNull
-    @Column(name = "product_id")
+    @Column(name = "product_id", nullable = false)
     private Long productId;
 
     @NotNull
-    @Column(name = "unit_price")
+    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
     @NotNull
