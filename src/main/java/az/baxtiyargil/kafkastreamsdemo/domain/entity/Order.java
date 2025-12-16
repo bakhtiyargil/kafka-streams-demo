@@ -4,6 +4,7 @@ import az.baxtiyargil.kafkastreamsdemo.domain.enumeration.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.io.Serializable;
@@ -43,6 +44,7 @@ public class Order implements Serializable {
     @Column(name = "store_id", nullable = false)
     private Long storeId;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 

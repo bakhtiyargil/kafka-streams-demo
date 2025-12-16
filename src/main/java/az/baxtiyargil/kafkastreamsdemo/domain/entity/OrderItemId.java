@@ -16,7 +16,6 @@ public class OrderItemId implements Serializable {
     @Serial
     private static final long serialVersionUID = SERIAL_VERSION_UID;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "line_item_id", unique = true, nullable = false, updatable = false)
-    private Long lineItemId;
+    private Integer lineItemId;
 }

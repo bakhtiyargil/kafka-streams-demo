@@ -3,6 +3,7 @@ package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.io.Serializable;
@@ -37,6 +38,7 @@ public class OrderItem implements Serializable {
     @Column(name = "shipment_id")
     private Long shipmentId;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
