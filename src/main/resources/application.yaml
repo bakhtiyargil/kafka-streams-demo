@@ -32,13 +32,6 @@ spring:
           batch_size: 50
   kafka:
     bootstrap-servers: localhost:9092
-    consumer:
-      auto-offset-reset: earliest
-    admin:
-      properties:
-        security.protocol: SASL_PLAINTEXT
-        sasl.mechanism: PLAIN
-        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_USERNAME} password=${KAFKA_PASSWORD};
     properties:
       security.protocol: SASL_PLAINTEXT
       sasl.mechanism: PLAIN

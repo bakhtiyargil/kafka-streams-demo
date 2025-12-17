@@ -14,7 +14,6 @@ public class OrderMapper {
 
     public Order toOrder(CreateOrderRequest request) {
         AtomicInteger index = new AtomicInteger(1);
-
         Order order = new Order();
         order.setStoreId(request.getStoreId());
         order.setCustomerId(request.getCustomerId());

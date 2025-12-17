@@ -4,7 +4,6 @@ import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConst
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-
 @Getter
 @RequiredArgsConstructor
 public enum EventType {
