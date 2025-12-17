@@ -1,16 +1,20 @@
-package az.baxtiyargil.kafkastreamsdemo.domain;
+package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.SERIAL_VERSION_UID;
 
 @Data
 @Entity
@@ -18,18 +22,18 @@ import java.util.Objects;
 public class OrderItem implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = SERIAL_VERSION_UID;
 
     @NotNull
     @EmbeddedId
     private OrderItemId id;
 
     @NotNull
-    @Column(name = "product_id")
+    @Column(name = "product_id", nullable = false)
     private Long productId;
 
     @NotNull
-    @Column(name = "unit_price")
+    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
     @NotNull
@@ -38,6 +42,11 @@ public class OrderItem implements Serializable {
 
     @Column(name = "shipment_id")
     private Long shipmentId;
+
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @Override
     public boolean equals(Object o) {

@@ -17,13 +17,13 @@ public class MessageProducer {
 
     private final StreamBridge streamBridge;
 
-    public <T extends Event> void sendFeeItemMessage(T event, String key) {
+    public <T extends Event> void sendOrderEvent(T event, String key) {
         log.info("Sending eventType: {}, payload: {} ", event.getType(), event);
         Message<?> message = MessageBuilder.withPayload(event)
                 .setHeader(Messaging.HEADER_X_EVENT_TYPE, event.getType().name())
                 .setHeader(KafkaHeaders.KEY, key)
                 .build();
-        streamBridge.send(Messaging.OutputChannel.FEE_ITEM, message);
+        streamBridge.send(Messaging.OutputChannel.ORDER, message);
     }
 
     public <T extends Event> void sendPaymentMessage(T event, String key) {

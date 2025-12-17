@@ -9,7 +9,6 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
-
 import java.util.function.BiFunction;
 import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging;
 

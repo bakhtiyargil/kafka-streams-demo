@@ -21,6 +21,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         order_updates: true
@@ -28,9 +30,15 @@ spring:
         format_sql: false
         jdbc:
           batch_size: 50
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_USERNAME} password=${KAFKA_PASSWORD};
   cloud:
     function:
-      definition: feeItemRouter;paymentRouter;feeItemDlqRouter;paymentDlqRouter
+      definition: orderRouter;paymentRouter;orderDlqRouter;paymentDlqRouter
     stream:
       kafka:
         binder:
@@ -45,45 +53,48 @@ spring:
             spring.json.trusted.packages: '*'
             spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
             spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+          producer-properties:
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
         bindings:
-          feeItemRouter-in-0:
+          orderRouter-in-0:
             consumer:
               ack-mode: record
               enable-dlq: true
-              dlq-name: fee-item-dlt
+              dlq-name: order-dlt
           paymentRouter-in-0:
             consumer:
               ack-mode: record
               enable-dlq: true
               dlq-name: payment-dlt
-          feeItemDlqRouter-in-0:
+          orderDlqRouter-in-0:
             consumer:
               ack-mode: record
               enable-dlq: true
-              dlq-name: fee-item-dlt
+              dlq-name: order-dlt
           paymentDlqRouter-in-0:
             consumer:
               ack-mode: record
               enable-dlq: true
               dlq-name: payment-dlt
       bindings:
-        sendFeeItemEvent-out-0:
-          destination: fee-item
+        sendOrderEvent-out-0:
+          destination: order
         sendPaymentEvent-out-0:
           destination: payment
-        feeItemRouter-in-0:
-          destination: fee-item
-          group: ${application.messaging.consumer-group-fee-item}
+        orderRouter-in-0:
+          destination: order
+          group: ${application.messaging.consumer-group-order}
           consumer:
             max-attempts: 1
         paymentRouter-in-0:
           destination: payment
-          group: ${application.messaging.consumer-group-fee-payment}
+          group: ${application.messaging.consumer-group-payment}
           consumer:
             max-attempts: 1
-        feeItemDlqRouter-in-0:
-          destination: fee-item-dlt
-          group: ${application.messaging.consumer-group-fee-item-dlq}
+        orderDlqRouter-in-0:
+          destination: order-dlt
+          group: ${application.messaging.consumer-group-order-dlq}
           consumer:
             max-attempts: 3
             back-off-initial-interval: 2000
@@ -91,7 +102,7 @@ spring:
             back-off-max-interval: 10000
         paymentDlqRouter-in-0:
           destination: payment-dlt
-          group: ${application.messaging.consumer-group-fee-payment-dlq}
+          group: ${application.messaging.consumer-group-payment-dlq}
           consumer:
             max-attempts: 3
             back-off-initial-interval: 2000
@@ -100,7 +111,7 @@ spring:
 
 application:
   messaging:
-    consumer-group-fee-item: fee-item-group
-    consumer-group-fee-item-dlq: fee-item-group-dlt
-    consumer-group-fee-payment: fee-payment-group
-    consumer-group-fee-payment-dlq: fee-payment-group-dlt
+    consumer-group-order: order-group
+    consumer-group-order-dlq: order-group-dlt
+    consumer-group-payment: payment-group
+    consumer-group-payment-dlq: payment-group-dlt
