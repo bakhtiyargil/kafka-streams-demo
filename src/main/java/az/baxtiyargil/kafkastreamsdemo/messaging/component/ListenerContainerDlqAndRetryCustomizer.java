@@ -25,7 +25,7 @@ public class ListenerContainerDlqAndRetryCustomizer implements ListenerContainer
                           String group,
                           BiFunction<ConsumerRecord<?, ?>, Exception, TopicPartition> dlqDestinationResolver,
                           BackOff backOff) {
-        if (destinationName.equals(TopicNames.FEE_ITEM_DLT) || destinationName.equals(TopicNames.PAYMENT_DLT)) {
+        if (destinationName.equals(TopicNames.ORDER_DLT) || destinationName.equals(TopicNames.PAYMENT_DLT)) {
             ConsumerRecordRecoverer dlpr = new RetryDeadLetterPublishingRecoverer(kafkaTemplate,
                     dlqDestinationResolver);
             container.setCommonErrorHandler(new DefaultErrorHandler(dlpr, backOff));
@@ -34,7 +34,7 @@ public class ListenerContainerDlqAndRetryCustomizer implements ListenerContainer
 
     @Override
     public boolean retryAndDlqInBinding(String destinationName, String group) {
-        return !(destinationName.equals(TopicNames.FEE_ITEM_DLT) || destinationName.equals(TopicNames.PAYMENT_DLT));
+        return !(destinationName.equals(TopicNames.ORDER_DLT) || destinationName.equals(TopicNames.PAYMENT_DLT));
     }
 
 }

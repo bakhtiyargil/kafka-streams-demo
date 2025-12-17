@@ -3,9 +3,6 @@ package az.baxtiyargil.kafkastreamsdemo.configuration.properties;
 public final class ApplicationConstants {
 
     public static final Long SERIAL_VERSION_UID = 1L;
-    public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String SECURITY_METHOD_NAME = "basicAuth";
-    public static final String OVERDRAFT_LIMIT_REGISTER_ID = "4205";
 
     private ApplicationConstants() {
     }
@@ -21,9 +18,9 @@ public final class ApplicationConstants {
 
         public static class TopicNames {
 
-            public static final String FEE_ITEM = "fee-item";
+            public static final String ORDER = "order";
             public static final String PAYMENT = "payment";
-            public static final String FEE_ITEM_DLT = "fee-item-dlt";
+            public static final String ORDER_DLT = "order-dlt";
             public static final String PAYMENT_DLT = "payment-dlt";
 
             private TopicNames() {
@@ -33,7 +30,7 @@ public final class ApplicationConstants {
 
         public static class OutputChannel {
 
-            public static final String FEE_ITEM = "sendFeeItemEvent-out-0";
+            public static final String ORDER = "sendOrderEvent-out-0";
             public static final String PAYMENT = "sendPaymentEvent-out-0";
 
             private OutputChannel() {
@@ -43,10 +40,7 @@ public final class ApplicationConstants {
 
         public static class ConsumerFunctionNames {
 
-            public static final String FEE_ITEM_RECEIVED_EVENT_CONSUMER = "feeItemReceivedEventConsumer";
-            public static final String FEE_ITEM_CREATED_EVENT_CONSUMER = "feeItemCreatedEventConsumer";
-            public static final String FEE_ITEM_VALIDATED_EVENT_CONSUMER = "feeItemValidatedEventConsumer";
-            public static final String PAYMENT_CREATED_EVENT_CONSUMER = "paymentCreatedEventConsumer";
+            public static final String ORDER_CREATED_EVENT_CONSUMER = "orderCreatedEventConsumer";
 
             private ConsumerFunctionNames() {
             }
