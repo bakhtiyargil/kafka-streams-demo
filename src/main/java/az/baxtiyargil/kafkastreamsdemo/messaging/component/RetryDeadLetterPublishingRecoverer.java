@@ -24,23 +24,25 @@ public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingReco
     protected void publish(@NotNull ProducerRecord<Object, Object> outRecord,
                            @NotNull KafkaOperations<Object, Object> kafkaTemplate,
                            @NotNull ConsumerRecord<?, ?> inRecord) {
-        Headers headers = inRecord.headers();
-        Header retryCountHeader = headers.lastHeader(Messaging.HEADER_X_RETRY_COUNT);
 
-        int retryCount = 1;
-        if (retryCountHeader == null) {
-            headers.add(Messaging.HEADER_X_RETRY_COUNT, String.valueOf(retryCount).getBytes());
-        } else {
-            retryCount = Integer.parseInt(new String(retryCountHeader.value()));
-            headers.remove(Messaging.HEADER_X_RETRY_COUNT);
-            headers.add(Messaging.HEADER_X_RETRY_COUNT, String.valueOf(++retryCount).getBytes());
-        }
+        Headers inHeaders = inRecord.headers();
+        Header retryHeader = inHeaders.lastHeader(Messaging.HEADER_X_RETRY_COUNT);
 
+        int retryCount = retryHeader == null
+                ? 1
+                : Integer.parseInt(new String(retryHeader.value())) + 1;
         if (retryCount > 3) {
-            log.warn("Retries exceeded, ignore message {}", inRecord.value().toString());
+            log.warn("Retries exceeded, ignoring message {}", inRecord.value());
             return;
         }
-        headers.forEach(header -> outRecord.headers().add(header));
+
+        inHeaders.remove(Messaging.HEADER_X_RETRY_COUNT);
+        inHeaders.add(
+                Messaging.HEADER_X_RETRY_COUNT,
+                Integer.toString(retryCount).getBytes()
+        );
+
+        inHeaders.forEach(h -> outRecord.headers().add(h));
         kafkaTemplate.send(outRecord);
     }
 
