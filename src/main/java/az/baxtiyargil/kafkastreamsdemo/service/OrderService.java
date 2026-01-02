@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,8 @@ public class OrderService {
     public void create(CreateOrderRequest request) {
         var order = orderMapper.toOrder(request);
         orderRepository.save(order);
-        messageProducer.sendOrderEvent(new OrderCreatedEvent(order.getId()), String.valueOf(order.getId()));
+        messageProducer.sendOrderEvent(new OrderCreatedEvent(UUID.randomUUID(), order.getId()),
+                String.valueOf(order.getId()));
     }
 
     @Transactional
