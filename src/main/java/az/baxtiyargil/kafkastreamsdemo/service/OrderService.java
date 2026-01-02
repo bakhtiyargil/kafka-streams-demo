@@ -2,6 +2,8 @@ package az.baxtiyargil.kafkastreamsdemo.service;
 
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Inventory;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
+import az.baxtiyargil.kafkastreamsdemo.error.ApplicationException;
+import az.baxtiyargil.kafkastreamsdemo.error.ErrorCode;
 import az.baxtiyargil.kafkastreamsdemo.mapper.OrderMapper;
 import az.baxtiyargil.kafkastreamsdemo.messaging.MessageProducer;
 import az.baxtiyargil.kafkastreamsdemo.messaging.event.OrderCreatedEvent;
@@ -11,6 +13,7 @@ import az.baxtiyargil.kafkastreamsdemo.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +33,26 @@ public class OrderService {
 
     @Transactional
     public void updateInventory(Long id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("order not found"));
+        var order = findById(id);
+
         var storeId = order.getStoreId();
         var productId = order.getOrderItems().get(0).getProductId();
         var productQuantity = order.getOrderItems().get(0).getQuantity();
-        Inventory inventory = inventoryRepository.findByStoreIdAndProductId(storeId, productId)
-                .orElseThrow(() -> new RuntimeException("inventory not found"));
+        var inventory = findInventoryByStoreAndProductId(storeId, productId);
+
         inventory.updateIfAvailableInventory(productQuantity);
         inventoryRepository.save(inventory);
+    }
+
+    private Order findById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorCode.ORDER_NOT_FOUND, Map.of("id", id)));
+    }
+
+    private Inventory findInventoryByStoreAndProductId(Long storeId, Long productId) {
+        return inventoryRepository.findByStoreIdAndProductId(storeId, productId)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorCode.INVENTORY_NOT_FOUND, Map.of("storeId", storeId, "productId", productId)));
     }
 }

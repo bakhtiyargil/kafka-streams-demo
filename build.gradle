@@ -36,6 +36,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
 	implementation 'com.oracle.database.jdbc:ojdbc17:23.9.0.25.07'
+	implementation 'org.apache.commons:commons-text:1.12.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
