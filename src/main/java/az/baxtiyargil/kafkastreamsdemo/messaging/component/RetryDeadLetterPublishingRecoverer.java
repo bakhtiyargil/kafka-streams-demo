@@ -1,6 +1,5 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -11,6 +10,7 @@ import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import java.util.function.BiFunction;
 import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging;
+import org.springframework.lang.NonNull;
 
 @Slf4j
 public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingRecoverer {
@@ -21,9 +21,9 @@ public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingReco
         super(template, destinationResolver);
     }
 
-    protected void publish(@NotNull ProducerRecord<Object, Object> outRecord,
-                           @NotNull KafkaOperations<Object, Object> kafkaTemplate,
-                           @NotNull ConsumerRecord<?, ?> inRecord) {
+    protected void publish(@NonNull ProducerRecord<Object, Object> outRecord,
+                           @NonNull KafkaOperations<Object, Object> kafkaTemplate,
+                           @NonNull ConsumerRecord<?, ?> inRecord) {
 
         Headers inHeaders = inRecord.headers();
         Header retryHeader = inHeaders.lastHeader(Messaging.HEADER_X_RETRY_COUNT);
