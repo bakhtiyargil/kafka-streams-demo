@@ -2,6 +2,7 @@ package az.baxtiyargil.kafkastreamsdemo.service;
 
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Inventory;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
+import az.baxtiyargil.kafkastreamsdemo.domain.entity.OrderItem;
 import az.baxtiyargil.kafkastreamsdemo.error.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.error.ErrorCode;
 import az.baxtiyargil.kafkastreamsdemo.mapper.OrderMapper;
@@ -36,14 +37,13 @@ public class OrderService {
     @Transactional
     public void updateInventory(Long id) {
         var order = findById(id);
-
         var storeId = order.getStoreId();
-        var productId = order.getOrderItems().get(0).getProductId();
-        var productQuantity = order.getOrderItems().get(0).getQuantity();
-        var inventory = findInventoryByStoreAndProductId(storeId, productId);
 
-        inventory.updateIfAvailableInventory(productQuantity);
-        inventoryRepository.save(inventory);
+        for (OrderItem orderItem : order.getOrderItems()) {
+            var inventory = findInventoryByStoreAndProductId(storeId, orderItem.getProductId());
+            inventory.updateIfAvailableInventory(orderItem.getQuantity());
+            inventoryRepository.save(inventory);
+        }
     }
 
     private Order findById(Long id) {
