@@ -3,8 +3,8 @@ package az.baxtiyargil.kafkastreamsdemo.service;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Inventory;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.OrderItem;
+import az.baxtiyargil.kafkastreamsdemo.error.ApplicationErrorCodes;
 import az.baxtiyargil.kafkastreamsdemo.error.ApplicationException;
-import az.baxtiyargil.kafkastreamsdemo.error.ErrorCode;
 import az.baxtiyargil.kafkastreamsdemo.mapper.OrderMapper;
 import az.baxtiyargil.kafkastreamsdemo.messaging.MessageProducer;
 import az.baxtiyargil.kafkastreamsdemo.messaging.event.OrderCreatedEvent;
@@ -49,12 +49,12 @@ public class OrderService {
     private Order findById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.ORDER_NOT_FOUND, Map.of("id", id)));
+                        ApplicationErrorCodes.ORDER_NOT_FOUND, Map.of("id", id)));
     }
 
     private Inventory findInventoryByStoreAndProductId(Long storeId, Long productId) {
         return inventoryRepository.findByStoreIdAndProductId(storeId, productId)
                 .orElseThrow(() -> new ApplicationException(
-                        ErrorCode.INVENTORY_NOT_FOUND, Map.of("storeId", storeId, "productId", productId)));
+                        ApplicationErrorCodes.INVENTORY_NOT_FOUND, Map.of("storeId", storeId, "productId", productId)));
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -32,6 +33,9 @@ public class Inventory {
     @NotNull
     @Column(name = "product_inventory", nullable = false)
     private Long productInventory;
+
+    @Version
+    private Long version;
 
     public void updateIfAvailableInventory(Integer quantity) {
         if (quantity > productInventory) {

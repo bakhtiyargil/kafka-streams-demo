@@ -14,12 +14,12 @@ public class ApplicationException extends RuntimeException {
     private final ErrorCode code;
 
     public ApplicationException(ErrorCode code) {
-        super(code.getMessage());
+        super(code.message());
         this.code = code;
     }
 
     public ApplicationException(ErrorCode code, Map<String, Object> arguments) {
-        super(resolveMessage(code.getMessage(), arguments));
+        super(resolveMessage(code.message(), arguments));
         this.code = code;
     }
 

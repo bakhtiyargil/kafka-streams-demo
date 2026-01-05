@@ -1,16 +1,11 @@
 package az.baxtiyargil.kafkastreamsdemo.error;
 
-import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
-public enum ErrorCode {
+public interface ErrorCode {
 
-    ORDER_NOT_FOUND("Order not found with ID {id}"),
-    INVENTORY_NOT_FOUND("Inventory not found with store ID {storeId} and product ID {productId}");
+    HttpStatus status();
 
-    @Getter
-    private final String message;
+    String message();
 
-    ErrorCode(String message) {
-        this.message = message;
-    }
 }
