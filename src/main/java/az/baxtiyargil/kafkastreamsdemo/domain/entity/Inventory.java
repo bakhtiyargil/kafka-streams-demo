@@ -1,5 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
+import az.baxtiyargil.kafkastreamsdemo.error.ApplicationErrorCodes;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.Hibernate;
+import java.util.Map;
 import java.util.Objects;
 
 @Data
@@ -39,7 +42,8 @@ public class Inventory {
 
     public void updateIfAvailableInventory(Integer quantity) {
         if (quantity > productInventory) {
-            throw new IllegalStateException("quantity exceeds inventory");
+            throw new ApplicationException(ApplicationErrorCodes.INSUFFICIENT_INVENTORY,
+                    Map.of("productId", this.productId, "storeId", this.storeId));
         }
         this.productInventory -= quantity;
     }
