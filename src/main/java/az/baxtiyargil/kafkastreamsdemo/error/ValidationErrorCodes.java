@@ -15,12 +15,17 @@ public enum ValidationErrorCodes implements ErrorCode {
     }
 
     @Override
+    public String asString() {
+        return this.name();
+    }
+
+    @Override
     public HttpStatus status() {
-        return status;
+        return this.status;
     }
 
     @Override
     public String message() {
-        return message;
+        return this.message;
     }
 }

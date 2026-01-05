@@ -4,7 +4,7 @@ import az.baxtiyargil.kafkastreamsdemo.domain.entity.Inventory;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.OrderItem;
 import az.baxtiyargil.kafkastreamsdemo.error.ApplicationErrorCodes;
-import az.baxtiyargil.kafkastreamsdemo.error.ApplicationException;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.mapper.OrderMapper;
 import az.baxtiyargil.kafkastreamsdemo.messaging.MessageProducer;
 import az.baxtiyargil.kafkastreamsdemo.messaging.event.OrderCreatedEvent;

@@ -1,9 +1,9 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
 import az.baxtiyargil.kafkastreamsdemo.domain.enumeration.OrderStatus;
-import az.baxtiyargil.kafkastreamsdemo.error.ApplicationException;
-import az.baxtiyargil.kafkastreamsdemo.error.ErrorCode;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.error.ValidationErrorCodes;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -88,7 +88,7 @@ public class Order implements Serializable {
 
     public void validate() {
         if (orderItems == null || orderItems.isEmpty() || orderItems.size() > 100) {
-            throw new ApplicationException(ValidationErrorCodes.ORDER_ITEMS_SIZE_EXCEEDED);
+            throw new ValidationException(ValidationErrorCodes.ORDER_ITEMS_SIZE_EXCEEDED, 100);
         }
     }
 
