@@ -2,7 +2,6 @@ package az.baxtiyargil.kafkastreamsdemo.error;
 
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
-import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
