@@ -7,12 +7,17 @@ import org.apache.commons.text.StringSubstitutor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -41,19 +46,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.internalServerError().body(response);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex,
-                                                               WebRequest request) {
-        var errId = UUID.randomUUID().toString();
-        ErrorResponse response = new ErrorResponse(errId,
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        String errId = UUID.randomUUID().toString();
+
+        ErrorResponse response = new ErrorResponse(
+                errId,
                 ValidationErrorCodes.VALIDATION_ERROR.name(),
                 ValidationErrorCodes.VALIDATION_ERROR.message(),
-                HttpStatus.BAD_REQUEST.value());
+                HttpStatus.BAD_REQUEST.value()
+        );
 
-        ex.getConstraintViolations().forEach(cv -> response.addValidationError(
-                cv.getPropertyPath().toString(),
-                cv.getMessage()
-        ));
+        ex.getBindingResult()
+                .getFieldErrors()
+                .forEach(fieldError -> response.addValidationError(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
+                ));
+
         return ResponseEntity.badRequest().body(response);
     }
 

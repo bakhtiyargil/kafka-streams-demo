@@ -37,9 +37,6 @@ public class Inventory {
     @Column(name = "product_inventory", nullable = false)
     private Long productInventory;
 
-    @Version
-    private Long version;
-
     public void updateIfAvailableInventory(Integer quantity) {
         if (quantity > productInventory) {
             throw new ApplicationException(ApplicationErrorCodes.INSUFFICIENT_INVENTORY,
