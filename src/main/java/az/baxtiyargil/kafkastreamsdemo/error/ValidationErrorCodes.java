@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 public enum ValidationErrorCodes implements ErrorCode {
 
     ORDER_ITEMS_SIZE_EXCEEDED("ORDER_ITEMS_SIZE_EXCEEDED"),
-    VALIDATION_ERROR("Validation failed");
+    VALIDATION_ERROR("VALIDATION_ERROR"),;
 
     private final String message;
     private final HttpStatus status;

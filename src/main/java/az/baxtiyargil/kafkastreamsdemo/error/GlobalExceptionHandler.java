@@ -1,9 +1,9 @@
 package az.baxtiyargil.kafkastreamsdemo.error;
 
+import az.baxtiyargil.kafkastreamsdemo.configuration.MessageResolver;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
 import org.apache.commons.text.StringSubstitutor;
-import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -21,10 +21,10 @@ import java.util.UUID;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final MessageSource messageSource;
+    private final MessageResolver messageResolver;
 
-    public GlobalExceptionHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
+    public GlobalExceptionHandler(MessageResolver messageResolver) {
+        this.messageResolver = messageResolver;
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -43,15 +43,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.internalServerError().body(response);
     }
 
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
         String errId = UUID.randomUUID().toString();
-
         ErrorResponse response = new ErrorResponse(
                 errId,
                 ValidationErrorCodes.VALIDATION_ERROR.name(),
-                ValidationErrorCodes.VALIDATION_ERROR.message(),
+                resolveMessage(ValidationErrorCodes.VALIDATION_ERROR),
                 HttpStatus.BAD_REQUEST.value()
         );
 
@@ -61,7 +61,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         fieldError.getField(),
                         fieldError.getDefaultMessage()
                 ));
-
         return ResponseEntity.badRequest().body(response);
     }
 
@@ -76,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private String resolveMessage(ErrorCode code, Object... args) {
         try {
-            return messageSource.getMessage(code.message(), args, LocaleContextHolder.getLocale());
+            return messageResolver.getMessage(code.message(), LocaleContextHolder.getLocale(), args);
         } catch (NoSuchMessageException exception) {
             return code.message();
         }
