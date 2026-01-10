@@ -1,8 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.error;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,7 @@ public class ErrorResponse {
     private final String message;
     private final Integer status;
     private final LocalDateTime timestamp;
-    private final List<ValidationError> validationErrors;
+    private final List<ErrorProperty> properties;
 
     public ErrorResponse(String id, String code, String message, Integer status) {
         this.id = id;
@@ -23,13 +21,13 @@ public class ErrorResponse {
         this.message = message;
         this.status = status;
         this.timestamp = LocalDateTime.now();
-        this.validationErrors = new ArrayList<>();
+        this.properties = new ArrayList<>();
     }
 
-    public void addValidationError(String property, String message) {
-        this.validationErrors.add(new ValidationError(property, message));
+    public void addProperty(String property, String message) {
+        this.properties.add(new ErrorProperty(property, message));
     }
 
-    public record ValidationError(String property, String message) {
+    public record ErrorProperty(String property, String message) {
     }
 }

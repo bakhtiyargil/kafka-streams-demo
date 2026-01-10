@@ -22,7 +22,7 @@ public class MessageConsumer {
     public Consumer<Message<OrderCreatedEvent>> onOrderCreatedEvent() {
         return message -> {
             log.info(LOG_FORMAT, message.getPayload().getType(), message.getPayload());
-            orderService.updateInventory(message.getPayload().orderId());
+            //orderService.updateInventory(message.getPayload().orderId());
         };
     }
 

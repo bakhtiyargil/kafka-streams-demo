@@ -1,7 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
 import az.baxtiyargil.kafkastreamsdemo.domain.enumeration.OrderStatus;
-import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.error.ValidationErrorCodes;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
 import jakarta.persistence.CascadeType;

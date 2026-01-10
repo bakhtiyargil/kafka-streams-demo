@@ -28,6 +28,8 @@ public class OrderService {
     @Transactional
     public void create(CreateOrderRequest request) {
         var order = orderMapper.toOrder(request);
+        order.validate();
+
         orderRepository.save(order);
         messageProducer.sendOrderEvent(new OrderCreatedEvent(UUID.randomUUID(), order.getId()),
                 String.valueOf(order.getId()));
