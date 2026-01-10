@@ -23,6 +23,7 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.SERIAL_VERSION_UID;
@@ -86,9 +87,21 @@ public class Order implements Serializable {
     }
 
     public void validate() {
+        validateItemsSize();
+        validateNoDuplicateOrderItems();
+    }
+
+    private void validateItemsSize() {
         if (orderItems == null || orderItems.isEmpty() || orderItems.size() > 100) {
             throw new ValidationException(ValidationErrorCodes.ORDER_ITEMS_SIZE_EXCEEDED, 100);
         }
     }
 
+    private void validateNoDuplicateOrderItems() {
+        var seen = new HashSet<>();
+        var exists = !this.getOrderItems().stream().allMatch(seen::add);
+        if (exists) {
+            throw new ValidationException(ValidationErrorCodes.VALIDATION_ERROR);
+        }
+    }
 }

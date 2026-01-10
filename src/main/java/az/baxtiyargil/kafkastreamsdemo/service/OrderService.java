@@ -27,12 +27,18 @@ public class OrderService {
 
     @Transactional
     public void create(CreateOrderRequest request) {
+        /* TODO
+            validate productId exists
+            log error handling
+            mdc id trace
+        */
         var order = orderMapper.toOrder(request);
         order.validate();
 
         orderRepository.save(order);
-        messageProducer.sendOrderEvent(new OrderCreatedEvent(UUID.randomUUID(), order.getId()),
-                String.valueOf(order.getId()));
+        messageProducer.sendOrderEvent(
+                new OrderCreatedEvent(UUID.randomUUID(), order.getId()), String.valueOf(order.getId())
+        );
     }
 
     @Transactional
