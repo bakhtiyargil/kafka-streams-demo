@@ -13,7 +13,7 @@ public class ErrorResponse {
     private final String message;
     private final Integer status;
     private final LocalDateTime timestamp;
-    private final List<ErrorProperty> properties;
+    private final List<Property> properties;
 
     public ErrorResponse(String id, String code, String message, Integer status) {
         this.id = id;
@@ -24,10 +24,10 @@ public class ErrorResponse {
         this.properties = new ArrayList<>();
     }
 
-    public void addProperty(String property, String message) {
-        this.properties.add(new ErrorProperty(property, message));
+    public void addProperty(String propertyName, String message) {
+        this.properties.add(new Property(propertyName, message));
     }
 
-    public record ErrorProperty(String property, String message) {
+    public record Property(String name, String message) {
     }
 }
