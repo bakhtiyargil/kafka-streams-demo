@@ -39,8 +39,7 @@ public class Inventory {
 
     public void updateIfAvailableInventory(Integer quantity) {
         if (quantity > productInventory) {
-            throw new ApplicationException(ApplicationErrorCodes.INSUFFICIENT_INVENTORY,
-                    Map.of("productId", this.productId, "storeId", this.storeId));
+            throw new ApplicationException(ApplicationErrorCodes.INSUFFICIENT_INVENTORY, this.productId, this.storeId);
         }
         this.productInventory -= quantity;
     }

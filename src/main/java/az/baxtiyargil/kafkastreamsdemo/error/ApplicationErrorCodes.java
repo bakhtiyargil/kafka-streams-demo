@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 
 public enum ApplicationErrorCodes implements ErrorCode {
 
-    ORDER_NOT_FOUND("Order not found with ID {id}"),
-    INVENTORY_NOT_FOUND("Inventory not found with store {storeId} and product {productId}"),
-    INSUFFICIENT_INVENTORY("Not enough inventory for product {productId} in store {storeId}");
+    ORDER_NOT_FOUND("ORDER_NOT_FOUND"),
+    INVENTORY_NOT_FOUND("INVENTORY_NOT_FOUND"),
+    INSUFFICIENT_INVENTORY("INSUFFICIENT_INVENTORY");
 
     private final String message;
     private final HttpStatus status;

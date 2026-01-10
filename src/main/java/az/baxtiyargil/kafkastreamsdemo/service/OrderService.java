@@ -14,7 +14,6 @@ import az.baxtiyargil.kafkastreamsdemo.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -49,12 +48,12 @@ public class OrderService {
     private Order findById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(
-                        ApplicationErrorCodes.ORDER_NOT_FOUND, Map.of("id", id)));
+                        ApplicationErrorCodes.ORDER_NOT_FOUND, id));
     }
 
     private Inventory findInventoryByStoreAndProductId(Long storeId, Long productId) {
         return inventoryRepository.findByStoreIdAndProductId(storeId, productId)
                 .orElseThrow(() -> new ApplicationException(
-                        ApplicationErrorCodes.INVENTORY_NOT_FOUND, Map.of("storeId", storeId, "productId", productId)));
+                        ApplicationErrorCodes.INVENTORY_NOT_FOUND, storeId, productId));
     }
 }

@@ -3,7 +3,6 @@ package az.baxtiyargil.kafkastreamsdemo.error;
 import az.baxtiyargil.kafkastreamsdemo.configuration.MessageResolver;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
-import org.apache.commons.text.StringSubstitutor;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import java.util.Map;
 import java.util.UUID;
 
 @RestControllerAdvice
@@ -38,7 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<Object> handleApplicationException(ApplicationException ex) {
         var errId = UUID.randomUUID().toString();
-        String message = resolveApplicationMessage(ex.getErrorCode(), ex.getArgs());
+        String message = resolveMessage(ex.getErrorCode(), ex.getArgs());
         var response = buildErrorResponse(errId, ex.getErrorCode().name(), message, ex.getErrorCode().status().value());
         return ResponseEntity.internalServerError().body(response);
     }
@@ -79,10 +77,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         } catch (NoSuchMessageException exception) {
             return code.message();
         }
-    }
-
-    private String resolveApplicationMessage(ErrorCode code, Map<String, Object> args) {
-        return args.isEmpty() ? code.message() :
-                StringSubstitutor.replace(code.message(), args, "{", "}");
     }
 }
