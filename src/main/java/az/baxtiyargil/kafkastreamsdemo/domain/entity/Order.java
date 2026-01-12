@@ -77,8 +77,8 @@ public class Order implements Serializable {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
-        Order orderItem = (Order) o;
-        return getId() != null && Objects.equals(getId(), orderItem.getId());
+        Order order = (Order) o;
+        return getId() != null && Objects.equals(getId(), order.getId());
     }
 
     @Override
