@@ -6,6 +6,7 @@ public enum ApplicationErrorCodes implements ErrorCode {
 
     ORDER_NOT_FOUND("ORDER_NOT_FOUND"),
     INVENTORY_NOT_FOUND("INVENTORY_NOT_FOUND"),
+    PRODUCT_NOT_FOUND("PRODUCT_NOT_FOUND"),
     INSUFFICIENT_INVENTORY("INSUFFICIENT_INVENTORY");
 
     private final String message;

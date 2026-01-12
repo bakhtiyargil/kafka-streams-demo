@@ -3,6 +3,7 @@ package az.baxtiyargil.kafkastreamsdemo.error;
 import az.baxtiyargil.kafkastreamsdemo.configuration.MessageResolver;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Locale;
 import java.util.UUID;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -29,16 +33,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleValidationException(ValidationException ex) {
         var errId = UUID.randomUUID().toString();
         String message = resolveMessage(ex.getErrorCode(), ex.getArgs());
+        log("Validation error", errId, ex.getErrorCode().status(), ex);
         var response = buildErrorResponse(errId, ex.getErrorCode().name(), message, ex.getErrorCode().status().value());
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.status(ex.getErrorCode().status()).body(response);
     }
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<Object> handleApplicationException(ApplicationException ex) {
         var errId = UUID.randomUUID().toString();
         String message = resolveMessage(ex.getErrorCode(), ex.getArgs());
+        log("Application error", errId, ex.getErrorCode().status(), ex);
         var response = buildErrorResponse(errId, ex.getErrorCode().name(), message, ex.getErrorCode().status().value());
-        return ResponseEntity.internalServerError().body(response);
+        return ResponseEntity.status(ex.getErrorCode().status()).body(response);
     }
 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -49,9 +55,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 errId,
                 ValidationErrorCodes.VALIDATION_ERROR.name(),
-                resolveMessage(ValidationErrorCodes.VALIDATION_ERROR),
+                resolveMessage(ValidationErrorCodes.VALIDATION_ERROR, new Object[]{}),
                 HttpStatus.BAD_REQUEST.value()
         );
+        log("Method argument not valid error", errId, HttpStatus.BAD_REQUEST, ex);
 
         ex.getBindingResult()
                 .getFieldErrors()
@@ -71,11 +78,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    private String resolveMessage(ErrorCode code, Object... args) {
+    private String resolveMessage(ErrorCode code, Object[] args) {
         try {
-            return messageResolver.getMessage(code.message(), LocaleContextHolder.getLocale(), args);
+            return messageResolver.getMessage(code.message(), args);
         } catch (NoSuchMessageException exception) {
             return code.message();
         }
+    }
+
+    private void log(String title, String errId, HttpStatus status, Exception ex) {
+        log.error("{}, errId: {}, errStatus: {}, errMsg: {}, errCause: {}",
+                title, errId, status.value(), ex.getMessage(), getCauseMessage(ex));
+    }
+
+    private static String getCauseMessage(Exception ex) {
+        return ex.getCause() != null ? ex.getCause().getMessage() : "NoCause";
     }
 }

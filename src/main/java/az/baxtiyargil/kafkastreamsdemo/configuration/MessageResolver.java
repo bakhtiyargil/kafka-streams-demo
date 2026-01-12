@@ -13,11 +13,11 @@ public class MessageResolver {
         this.messageSource = messageSource;
     }
 
-    public String getMessage(String code, Object... args) {
-        return messageSource.getMessage(code, args, Locale.getDefault());
-    }
-
-    public String getMessage(String code, Locale locale, Object... args) {
-        return messageSource.getMessage(code, args, locale);
+    public String getMessage(String code, Object[] args) {
+        return messageSource.getMessage(
+                code,
+                args,
+                Locale.getDefault()
+        );
     }
 }
