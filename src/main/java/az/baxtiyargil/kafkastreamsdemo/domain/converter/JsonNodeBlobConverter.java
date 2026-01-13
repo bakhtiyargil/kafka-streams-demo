@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-@Converter(autoApply = false)
+@Converter
 public class JsonNodeBlobConverter implements AttributeConverter<JsonNode, byte[]> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();

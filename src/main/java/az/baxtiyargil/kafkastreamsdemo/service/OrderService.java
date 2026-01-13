@@ -1,5 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.service;
 
+import az.baxtiyargil.kafkastreamsdemo.configuration.TraceContext;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Inventory;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.OrderItem;
@@ -15,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,9 +35,7 @@ public class OrderService {
         checkProduct(order);
 
         orderRepository.save(order);
-        messageProducer.sendOrderEvent(
-                new OrderCreatedEvent(UUID.randomUUID(), order.getId()), String.valueOf(order.getId())
-        );
+        messageProducer.sendOrderEvent(new OrderCreatedEvent(order, TraceContext.getTraceId()));
     }
 
     @Transactional
