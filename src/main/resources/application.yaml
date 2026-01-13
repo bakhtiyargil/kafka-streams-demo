@@ -85,13 +85,13 @@ spring:
         orderRouter-in-0:
           destination: order
           group: ${application.messaging.consumer-group-order}
-          consumer:
-            max-attempts: 1
+#          consumer:
+#            max-attempts: 1
         paymentRouter-in-0:
           destination: payment
           group: ${application.messaging.consumer-group-payment}
-          consumer:
-            max-attempts: 1
+#          consumer:
+#            max-attempts: 1
         orderDlqRouter-in-0:
           destination: order-dlt
           group: ${application.messaging.consumer-group-order-dlq}

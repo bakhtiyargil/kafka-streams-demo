@@ -1,4 +1,4 @@
-package az.baxtiyargil.kafkastreamsdemo.messaging;
+package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.TraceContext;
 import org.springframework.integration.config.GlobalChannelInterceptor;
