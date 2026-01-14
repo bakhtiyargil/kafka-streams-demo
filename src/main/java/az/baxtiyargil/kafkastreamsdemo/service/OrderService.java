@@ -1,6 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.service;
 
-import az.baxtiyargil.kafkastreamsdemo.configuration.TraceContext;
+import az.baxtiyargil.kafkastreamsdemo.configuration.tracing.TraceContext;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Inventory;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.OrderItem;

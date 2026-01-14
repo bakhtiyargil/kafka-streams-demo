@@ -18,7 +18,7 @@ public class MessageConsumer {
     private final OrderService orderService;
 
     @Bean(ConsumerFunctionNames.ORDER_CREATED_EVENT_CONSUMER)
-    public EventConsumer<Message<OrderCreatedEvent>> onOrderCreatedEvent() {
+    public TracingEventConsumer<Message<OrderCreatedEvent>> onOrderCreatedEvent() {
         return message -> {
             log.info(LOG_FORMAT, message.getPayload().getType(), message.getPayload());
             orderService.updateInventory(message.getPayload().getPayload().orderId());

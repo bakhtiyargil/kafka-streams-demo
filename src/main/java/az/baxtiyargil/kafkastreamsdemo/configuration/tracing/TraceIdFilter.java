@@ -1,4 +1,4 @@
-package az.baxtiyargil.kafkastreamsdemo.configuration;
+package az.baxtiyargil.kafkastreamsdemo.configuration.tracing;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
