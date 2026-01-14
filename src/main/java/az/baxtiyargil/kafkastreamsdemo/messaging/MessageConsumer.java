@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
-import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -19,10 +18,10 @@ public class MessageConsumer {
     private final OrderService orderService;
 
     @Bean(ConsumerFunctionNames.ORDER_CREATED_EVENT_CONSUMER)
-    public Consumer<Message<OrderCreatedEvent>> onOrderCreatedEvent() {
+    public EventConsumer<Message<OrderCreatedEvent>> onOrderCreatedEvent() {
         return message -> {
             log.info(LOG_FORMAT, message.getPayload().getType(), message.getPayload());
-            //orderService.updateInventory(message.getPayload().orderId());
+            orderService.updateInventory(message.getPayload().getPayload().orderId());
         };
     }
 

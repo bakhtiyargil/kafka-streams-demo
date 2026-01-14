@@ -1,5 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
+import az.baxtiyargil.kafkastreamsdemo.configuration.properties.MessagingProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -15,10 +16,13 @@ import org.springframework.lang.NonNull;
 @Slf4j
 public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingRecoverer {
 
+    private final MessagingProperties messagingProperties;
+
     public RetryDeadLetterPublishingRecoverer(KafkaOperations<?, ?> template,
-                                              BiFunction<ConsumerRecord<?, ?>,
-                                                      Exception, TopicPartition> destinationResolver) {
+                                              BiFunction<ConsumerRecord<?, ?>, Exception, TopicPartition> destinationResolver,
+                                              MessagingProperties messagingProperties) {
         super(template, destinationResolver);
+        this.messagingProperties = messagingProperties;
     }
 
     protected void publish(@NonNull ProducerRecord<Object, Object> outRecord,
@@ -31,8 +35,8 @@ public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingReco
         int retryCount = retryHeader == null
                 ? 1
                 : Integer.parseInt(new String(retryHeader.value())) + 1;
-        if (retryCount > 3) {
-            log.warn("Retries exceeded, ignoring message {}", inRecord.value());
+        if (retryCount > Integer.parseInt(messagingProperties.getMaxDltRetry())) {
+            log.warn("Retries exceeded, ignoring message key: {}", inRecord.key());
             return;
         }
 

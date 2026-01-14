@@ -39,7 +39,7 @@ public class Inventory {
         if (quantity > productInventory) {
             throw new ApplicationException(ApplicationErrorCodes.INSUFFICIENT_INVENTORY, this.productId, this.storeId);
         }
-        this.productInventory -= quantity;
+        this.productInventory = this.productInventory - quantity;
     }
 
     @Override
