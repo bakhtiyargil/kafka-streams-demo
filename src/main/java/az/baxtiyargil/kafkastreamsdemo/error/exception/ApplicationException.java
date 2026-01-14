@@ -1,6 +1,5 @@
 package az.baxtiyargil.kafkastreamsdemo.error.exception;
 
-import az.baxtiyargil.kafkastreamsdemo.error.ApplicationErrorCodes;
 import lombok.Getter;
 
 @Getter

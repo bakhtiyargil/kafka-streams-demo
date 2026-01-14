@@ -1,6 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
-import az.baxtiyargil.kafkastreamsdemo.error.ApplicationErrorCodes;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationErrorCodes;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

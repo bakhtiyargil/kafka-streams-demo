@@ -2,6 +2,8 @@ package az.baxtiyargil.kafkastreamsdemo.error;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.MessageResolver;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ErrorCode;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationErrorCodes;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
@@ -51,7 +53,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String errId = UUID.randomUUID().toString();
         ErrorResponse response = new ErrorResponse(
                 errId,
-                ValidationErrorCodes.VALIDATION_ERROR.name(),
+                ValidationErrorCodes.VALIDATION_ERROR.asString(),
                 resolveMessage(ValidationErrorCodes.VALIDATION_ERROR, new Object[]{}),
                 HttpStatus.BAD_REQUEST.value()
         );

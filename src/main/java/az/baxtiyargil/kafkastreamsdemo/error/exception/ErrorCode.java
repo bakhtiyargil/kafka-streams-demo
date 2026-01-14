@@ -1,4 +1,4 @@
-package az.baxtiyargil.kafkastreamsdemo.error;
+package az.baxtiyargil.kafkastreamsdemo.error.exception;
 
 import org.springframework.http.HttpStatus;
 
@@ -9,5 +9,7 @@ public interface ErrorCode {
     HttpStatus status();
 
     String message();
+
+    RetryPolicy retryPolicy();
 
 }

@@ -1,5 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging.event;
 
+import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -25,6 +26,10 @@ public class OrderCreatedEvent implements DomainEvent {
         this.ttl = LocalDateTime.now().plusMinutes(1);
         this.traceId = traceId;
         this.payload = payload;
+    }
+
+    public OrderCreatedEvent(String traceId, Order order) {
+        this(traceId, Payload.from(order));
     }
 
     @Override
@@ -62,5 +67,13 @@ public class OrderCreatedEvent implements DomainEvent {
                           Long customerId,
                           String status,
                           Long storeId) {
+        public static Payload from(Order order) {
+            return new Payload(
+                    order.getId(),
+                    order.getOrderedAt(),
+                    order.getCustomerId(),
+                    order.getStatus().name(),
+                    order.getStoreId());
+        }
     }
 }

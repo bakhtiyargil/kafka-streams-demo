@@ -1,7 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
 import az.baxtiyargil.kafkastreamsdemo.domain.enumeration.OrderStatus;
-import az.baxtiyargil.kafkastreamsdemo.error.ValidationErrorCodes;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationErrorCodes;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -99,9 +99,12 @@ public class Order implements Serializable {
 
     private void validateNoDuplicateOrderItems() {
         var seen = new HashSet<>();
-        var exists = !this.getOrderItems().stream().allMatch(seen::add);
+        var exists = !this.getOrderItems()
+                .stream()
+                .map(OrderItem::getProductId)
+                .allMatch(seen::add);
         if (exists) {
-            throw new ValidationException(ValidationErrorCodes.VALIDATION_ERROR);
+            throw new ValidationException(ValidationErrorCodes.DUPLICATE_PRODUCTS);
         }
     }
 }

@@ -4,7 +4,7 @@ import az.baxtiyargil.kafkastreamsdemo.configuration.tracing.TraceContext;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Inventory;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.Order;
 import az.baxtiyargil.kafkastreamsdemo.domain.entity.OrderItem;
-import az.baxtiyargil.kafkastreamsdemo.error.ApplicationErrorCodes;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationErrorCodes;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.mapper.OrderMapper;
 import az.baxtiyargil.kafkastreamsdemo.messaging.MessageProducer;
@@ -15,6 +15,7 @@ import az.baxtiyargil.kafkastreamsdemo.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,17 +33,10 @@ public class OrderService {
     public void create(CreateOrderRequest request) {
         var order = orderMapper.toOrder(request);
         order.validate();
-        checkProduct(order);
+        checkProductExistence(order);
 
         orderRepository.save(order);
-        messageProducer.sendOrderEvent(new OrderCreatedEvent(
-                TraceContext.getTraceId(),
-                new OrderCreatedEvent.Payload(
-                        order.getId(),
-                        order.getOrderedAt(),
-                        order.getCustomerId(),
-                        order.getStatus().name(),
-                        order.getStoreId())));
+        messageProducer.sendOrderEvent(new OrderCreatedEvent(TraceContext.getTraceId(), order));
     }
 
     @Transactional
@@ -57,7 +51,7 @@ public class OrderService {
         }
     }
 
-    private void checkProduct(Order order) {
+    private void checkProductExistence(Order order) {
         Set<Long> itemIds = order.getOrderItems()
                 .stream()
                 .map(OrderItem::getProductId)
