@@ -38,7 +38,7 @@ spring:
       sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_USERNAME} password=${KAFKA_PASSWORD};
   cloud:
     function:
-      definition: orderRouter;paymentRouter;orderDlqRouter;paymentDlqRouter
+      definition: orderRouter;paymentRouter;orderDlqRouter;paymentDlqRouter;orderCreatedEventConsumer
     stream:
       kafka:
         binder:

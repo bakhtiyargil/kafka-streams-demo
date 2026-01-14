@@ -32,10 +32,12 @@ public class RegisterMessageBrokerRouters {
     }
 
     private RoutingFunction createRoutingFunction() {
-        return new RoutingFunction(functionCatalog,
+        return new RoutingFunction(
+                functionCatalog,
                 functionProperties,
                 new BeanFactoryResolver(configurableListableBeanFactory),
-                new EventTypeMessageRoutingCallback());
+                new EventTypeMessageRoutingCallback()
+        );
     }
 
 }

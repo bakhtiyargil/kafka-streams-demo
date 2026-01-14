@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import java.util.UUID;
 import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging.HEADER_X_TRACE_ID;
 
 @Configuration
@@ -28,7 +27,7 @@ public class TracingFunctionWrapper {
                 }
 
                 if (traceId == null) {
-                    traceId = UUID.randomUUID().toString();
+                    traceId = TraceContext.getTraceId();
                     message = MessageBuilder.fromMessage(message)
                             .setHeader(HEADER_X_TRACE_ID, traceId)
                             .build();
