@@ -18,7 +18,7 @@ public class MessageProducer {
     private final StreamBridge streamBridge;
 
     public <T extends DomainEvent> void sendOrderEvent(T event) {
-        log.info("Sending eventType: {}, payload: {} ", event.getType(), event);
+        log.info("Sending event: {}, payload: {} ", event.getType(), event);
         Message<?> message = MessageBuilder.withPayload(event)
                 .setHeader(Messaging.HEADER_X_EVENT_TYPE, event.getType())
                 .setHeader(KafkaHeaders.KEY, event.getEventId().toString())
