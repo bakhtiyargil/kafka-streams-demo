@@ -1,6 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.tracing.TraceContext;
+import az.baxtiyargil.kafkastreamsdemo.messaging.event.DomainEvent;
 import org.springframework.cloud.function.context.catalog.FunctionAroundWrapper;
 import org.springframework.cloud.function.context.catalog.SimpleFunctionRegistry;
 import org.springframework.context.annotation.Bean;
@@ -17,23 +18,24 @@ public class TracingFunctionWrapper {
         return new FunctionAroundWrapper() {
             @Override
             public Object doApply(Object input, SimpleFunctionRegistry.FunctionInvocationWrapper targetFunction) {
-                TraceContext.clearTraceId();
                 String traceId = null;
                 Message<?> message;
                 if (input instanceof Message<?> msg) {
                     traceId = msg.getHeaders().get(HEADER_X_TRACE_ID, String.class);
                     message = msg;
+                    if ((traceId == null) && (message instanceof DomainEvent event)) {
+                        traceId = event.getTraceId();
+                        message = MessageBuilder.fromMessage(message).setHeader(HEADER_X_TRACE_ID, traceId).build();
+                    }
                 } else {
                     message = MessageBuilder.withPayload(input).build();
                 }
-
                 if (traceId == null) {
                     traceId = TraceContext.getTraceId();
-                    message = MessageBuilder.fromMessage(message)
-                            .setHeader(HEADER_X_TRACE_ID, traceId)
-                            .build();
+                    message = MessageBuilder.fromMessage(message).setHeader(HEADER_X_TRACE_ID, traceId).build();
+                } else {
+                    TraceContext.clearTraceId();
                 }
-
                 TraceContext.setTraceId(traceId);
                 return targetFunction.apply(message);
             }
