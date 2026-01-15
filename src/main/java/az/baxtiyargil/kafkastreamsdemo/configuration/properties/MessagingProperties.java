@@ -9,6 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(value = "application.messaging")
 public class MessagingProperties {
 
-    String maxDltRetry;
+    private int maxRetry;
 
 }

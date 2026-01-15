@@ -13,6 +13,7 @@ public final class ApplicationConstants {
         public static final String HEADER_X_EVENT_TYPE = "X-Event-Type";
         public static final String HEADER_X_TRACE_ID = "X-Trace-Id";
         public static final String ROUTER_BINDING_SUFFIX = "Router-in-";
+        public static final String HEADER_X_RETRY_REASON = "X-Retry-REASON";
 
         private Messaging() {
         }
@@ -20,9 +21,8 @@ public final class ApplicationConstants {
         public static class TopicNames {
 
             public static final String ORDER = "order";
-            public static final String PAYMENT = "payment";
-            public static final String ORDER_DLT = "order-dlt";
-            public static final String PAYMENT_DLT = "payment-dlt";
+            public static final String ORDER_DLT = "order.dlt";
+            public static final String ORDER_RETRY = "order.retry";
 
             private TopicNames() {
             }
@@ -32,7 +32,7 @@ public final class ApplicationConstants {
         public static class OutputChannel {
 
             public static final String ORDER = "sendOrderEvent-out-0";
-            public static final String PAYMENT = "sendPaymentEvent-out-0";
+            public static final String ORDER_RETRY = "sendOrderRetryEvent-out-0";
 
             private OutputChannel() {
             }

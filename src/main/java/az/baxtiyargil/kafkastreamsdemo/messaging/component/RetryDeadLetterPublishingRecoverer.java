@@ -35,7 +35,7 @@ public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingReco
         int retryCount = retryHeader == null
                 ? 1
                 : Integer.parseInt(new String(retryHeader.value())) + 1;
-        if (retryCount > Integer.parseInt(messagingProperties.getMaxDltRetry())) {
+        if (retryCount > messagingProperties.getMaxRetry()) {
             log.warn("Retries exceeded, ignoring message key: {}", inRecord.key());
             return;
         }

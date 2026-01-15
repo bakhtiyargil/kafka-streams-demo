@@ -19,11 +19,22 @@ public class MessageProducer {
 
     public <T extends DomainEvent> void sendOrderEvent(T event) {
         log.info("Sending event: {}, payload: {} ", event.getType(), event);
-        Message<?> message = MessageBuilder.withPayload(event)
+        Message<T> message = MessageBuilder.withPayload(event)
                 .setHeader(Messaging.HEADER_X_EVENT_TYPE, event.getType())
                 .setHeader(KafkaHeaders.KEY, event.getEventId().toString())
                 .build();
         streamBridge.send(Messaging.OutputChannel.ORDER, message);
     }
 
+    public <T extends DomainEvent> void sendOrderRetryEvent(Message<?> message, Throwable throwable) {
+        int retryCount = (Integer) message.getHeaders().getOrDefault(Messaging.HEADER_X_RETRY_COUNT, 0);
+        var messageKey = message.getHeaders().getOrDefault(KafkaHeaders.RECEIVED_KEY, "");
+
+        Message<?> retryMessage = MessageBuilder.fromMessage(message)
+                .setHeader(Messaging.HEADER_X_RETRY_COUNT, ++retryCount)
+                .setHeader(Messaging.HEADER_X_RETRY_REASON, throwable.getClass().getSimpleName())
+                .setHeader(KafkaHeaders.KEY, messageKey)
+                .build();
+        streamBridge.send(Messaging.OutputChannel.ORDER_RETRY, retryMessage);
+    }
 }
