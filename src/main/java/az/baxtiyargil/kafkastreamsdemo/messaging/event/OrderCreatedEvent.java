@@ -28,8 +28,8 @@ public class OrderCreatedEvent implements DomainEvent {
         this.payload = payload;
     }
 
-    public OrderCreatedEvent(String traceId, Order order) {
-        this(traceId, Payload.from(order));
+    public static OrderCreatedEvent from(String traceId, Order order) {
+        return new OrderCreatedEvent(traceId, Payload.from(order));
     }
 
     @Override

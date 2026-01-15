@@ -35,7 +35,7 @@ public class OrderService {
         checkProductExistence(order);
 
         orderRepository.save(order);
-        messageProducer.sendOrderEvent(new OrderCreatedEvent(TraceContext.getTraceId(), order));
+        messageProducer.sendOrderEvent(OrderCreatedEvent.from(TraceContext.getTraceId(), order));
     }
 
     @Transactional
