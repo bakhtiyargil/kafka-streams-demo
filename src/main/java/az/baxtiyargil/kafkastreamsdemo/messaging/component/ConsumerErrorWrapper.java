@@ -2,6 +2,7 @@ package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
 import az.baxtiyargil.kafkastreamsdemo.messaging.MessageProducer;
 import az.baxtiyargil.kafkastreamsdemo.messaging.TracingEventConsumer;
+import az.baxtiyargil.kafkastreamsdemo.messaging.event.DomainEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class ConsumerErrorWrapper {
             } catch (Exception ex) {
                 if (message instanceof Message<?> msg) {
                     if (retryDecider.isRetryable(ex, msg)) {
-                        messageProducer.sendOrderRetryEvent(msg);
+                        messageProducer.sendOrderRetryEvent(msg, ex);
                     } else {
                         throw ex;
                     }
