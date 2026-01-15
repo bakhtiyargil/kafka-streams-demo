@@ -1,5 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationErrorCodes;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,9 +37,9 @@ public class Inventory {
 
     public void updateIfAvailableInventory(Integer quantity) {
         if (quantity > productInventory) {
-            throw new IllegalStateException("quantity exceeds inventory");
+            throw new ApplicationException(ApplicationErrorCodes.INSUFFICIENT_INVENTORY, this.productId, this.storeId);
         }
-        this.productInventory -= quantity;
+        this.productInventory = this.productInventory - quantity;
     }
 
     @Override

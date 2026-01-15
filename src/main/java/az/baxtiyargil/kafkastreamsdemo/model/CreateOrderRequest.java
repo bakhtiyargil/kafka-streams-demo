@@ -3,6 +3,7 @@ package az.baxtiyargil.kafkastreamsdemo.model;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class CreateOrderRequest {
     private Long customerId;
 
     @NotEmpty
+    @Size(max = 100)
     private List<@NotNull @Valid AddOrderItemRequest> orderItems;
 
 }

@@ -1,6 +1,8 @@
 package az.baxtiyargil.kafkastreamsdemo.domain.entity;
 
 import az.baxtiyargil.kafkastreamsdemo.domain.enumeration.OrderStatus;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationErrorCodes;
+import az.baxtiyargil.kafkastreamsdemo.error.exception.ValidationException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +23,7 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.SERIAL_VERSION_UID;
@@ -57,7 +60,7 @@ public class Order implements Serializable {
     private Long storeId;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<OrderItem> orderItems;
 
     @PrePersist
@@ -74,12 +77,34 @@ public class Order implements Serializable {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
-        Order orderItem = (Order) o;
-        return getId() != null && Objects.equals(getId(), orderItem.getId());
+        Order order = (Order) o;
+        return getId() != null && Objects.equals(getId(), order.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public void validate() {
+        validateItemsSize();
+        validateNoDuplicateOrderItems();
+    }
+
+    private void validateItemsSize() {
+        if (orderItems == null || orderItems.isEmpty() || orderItems.size() > 100) {
+            throw new ValidationException(ValidationErrorCodes.ORDER_ITEMS_SIZE_EXCEEDED, 100);
+        }
+    }
+
+    private void validateNoDuplicateOrderItems() {
+        var seen = new HashSet<>();
+        var exists = !this.getOrderItems()
+                .stream()
+                .map(OrderItem::getProductId)
+                .allMatch(seen::add);
+        if (exists) {
+            throw new ValidationException(ValidationErrorCodes.DUPLICATE_PRODUCTS);
+        }
     }
 }

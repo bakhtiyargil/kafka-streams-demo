@@ -1,6 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
-import jakarta.validation.constraints.NotNull;
+import az.baxtiyargil.kafkastreamsdemo.configuration.properties.MessagingProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -11,19 +11,23 @@ import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import java.util.function.BiFunction;
 import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging;
+import org.springframework.lang.NonNull;
 
 @Slf4j
 public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingRecoverer {
 
+    private final MessagingProperties messagingProperties;
+
     public RetryDeadLetterPublishingRecoverer(KafkaOperations<?, ?> template,
-                                              BiFunction<ConsumerRecord<?, ?>,
-                                                      Exception, TopicPartition> destinationResolver) {
+                                              BiFunction<ConsumerRecord<?, ?>, Exception, TopicPartition> destinationResolver,
+                                              MessagingProperties messagingProperties) {
         super(template, destinationResolver);
+        this.messagingProperties = messagingProperties;
     }
 
-    protected void publish(@NotNull ProducerRecord<Object, Object> outRecord,
-                           @NotNull KafkaOperations<Object, Object> kafkaTemplate,
-                           @NotNull ConsumerRecord<?, ?> inRecord) {
+    protected void publish(@NonNull ProducerRecord<Object, Object> outRecord,
+                           @NonNull KafkaOperations<Object, Object> kafkaTemplate,
+                           @NonNull ConsumerRecord<?, ?> inRecord) {
 
         Headers inHeaders = inRecord.headers();
         Header retryHeader = inHeaders.lastHeader(Messaging.HEADER_X_RETRY_COUNT);
@@ -31,8 +35,8 @@ public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingReco
         int retryCount = retryHeader == null
                 ? 1
                 : Integer.parseInt(new String(retryHeader.value())) + 1;
-        if (retryCount > 3) {
-            log.warn("Retries exceeded, ignoring message {}", inRecord.value());
+        if (retryCount > messagingProperties.getMaxRetry()) {
+            log.warn("Retries exceeded, ignoring message key: {}", inRecord.key());
             return;
         }
 

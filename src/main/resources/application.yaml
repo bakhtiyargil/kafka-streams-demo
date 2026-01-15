@@ -32,13 +32,16 @@ spring:
           batch_size: 50
   kafka:
     bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:
       security.protocol: SASL_PLAINTEXT
       sasl.mechanism: PLAIN
       sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${KAFKA_USERNAME} password=${KAFKA_PASSWORD};
   cloud:
     function:
-      definition: orderRouter;paymentRouter;orderDlqRouter;paymentDlqRouter
+      definition: orderRouter;orderRetryRouter
     stream:
       kafka:
         binder:
@@ -61,57 +64,33 @@ spring:
             consumer:
               ack-mode: record
               enable-dlq: true
-              dlq-name: order-dlt
-          paymentRouter-in-0:
+              dlq-name: order.dlt
+          orderRetryRouter-in-0:
             consumer:
               ack-mode: record
               enable-dlq: true
-              dlq-name: payment-dlt
-          orderDlqRouter-in-0:
-            consumer:
-              ack-mode: record
-              enable-dlq: true
-              dlq-name: order-dlt
-          paymentDlqRouter-in-0:
-            consumer:
-              ack-mode: record
-              enable-dlq: true
-              dlq-name: payment-dlt
+              dlq-name: order.dlt
       bindings:
         sendOrderEvent-out-0:
           destination: order
-        sendPaymentEvent-out-0:
-          destination: payment
+        sendOrderRetryEvent-out-0:
+          destination: order.retry
         orderRouter-in-0:
           destination: order
           group: ${application.messaging.consumer-group-order}
           consumer:
             max-attempts: 1
-        paymentRouter-in-0:
-          destination: payment
-          group: ${application.messaging.consumer-group-payment}
+        orderRetryRouter-in-0:
+          destination: order.retry
+          group: ${application.messaging.consumer-group-order-retry}
           consumer:
-            max-attempts: 1
-        orderDlqRouter-in-0:
-          destination: order-dlt
-          group: ${application.messaging.consumer-group-order-dlq}
-          consumer:
-            max-attempts: 3
-            back-off-initial-interval: 2000
+            max-attempts: 2
+            back-off-initial-interval: 5000
             back-off-multiplier: 3
-            back-off-max-interval: 10000
-        paymentDlqRouter-in-0:
-          destination: payment-dlt
-          group: ${application.messaging.consumer-group-payment-dlq}
-          consumer:
-            max-attempts: 3
-            back-off-initial-interval: 2000
-            back-off-multiplier: 3
-            back-off-max-interval: 10000
+            back-off-max-interval: 15100
 
 application:
   messaging:
     consumer-group-order: order-group
-    consumer-group-order-dlq: order-group-dlt
-    consumer-group-payment: payment-group
-    consumer-group-payment-dlq: payment-group-dlt
+    consumer-group-order-retry: order-retry-group
+    max-retry: 2

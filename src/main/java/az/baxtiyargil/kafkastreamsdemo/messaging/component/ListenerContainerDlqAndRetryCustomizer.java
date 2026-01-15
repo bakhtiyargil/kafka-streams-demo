@@ -1,6 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging.TopicNames;
+import az.baxtiyargil.kafkastreamsdemo.configuration.properties.MessagingProperties;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
@@ -17,6 +18,7 @@ import java.util.function.BiFunction;
 @RequiredArgsConstructor
 public class ListenerContainerDlqAndRetryCustomizer implements ListenerContainerWithDlqAndRetryCustomizer {
 
+    private final MessagingProperties messagingProperties;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
@@ -25,16 +27,19 @@ public class ListenerContainerDlqAndRetryCustomizer implements ListenerContainer
                           String group,
                           BiFunction<ConsumerRecord<?, ?>, Exception, TopicPartition> dlqDestinationResolver,
                           BackOff backOff) {
-        if (destinationName.equals(TopicNames.ORDER_DLT) || destinationName.equals(TopicNames.PAYMENT_DLT)) {
-            ConsumerRecordRecoverer dlpr = new RetryDeadLetterPublishingRecoverer(kafkaTemplate,
-                    dlqDestinationResolver);
+        if (destinationName.equals(TopicNames.ORDER_DLT)) {
+            ConsumerRecordRecoverer dlpr = new RetryDeadLetterPublishingRecoverer(
+                    kafkaTemplate,
+                    dlqDestinationResolver,
+                    messagingProperties
+            );
             container.setCommonErrorHandler(new DefaultErrorHandler(dlpr, backOff));
         }
     }
 
     @Override
     public boolean retryAndDlqInBinding(String destinationName, String group) {
-        return !(destinationName.equals(TopicNames.ORDER_DLT) || destinationName.equals(TopicNames.PAYMENT_DLT));
+        return !(destinationName.equals(TopicNames.ORDER_DLT));
     }
 
 }

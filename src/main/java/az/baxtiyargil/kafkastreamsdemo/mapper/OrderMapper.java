@@ -7,18 +7,22 @@ import az.baxtiyargil.kafkastreamsdemo.model.AddOrderItemRequest;
 import az.baxtiyargil.kafkastreamsdemo.model.CreateOrderRequest;
 import org.springframework.stereotype.Component;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 @Component
 public class OrderMapper {
 
     public Order toOrder(CreateOrderRequest request) {
-        AtomicInteger index = new AtomicInteger(1);
         Order order = new Order();
         order.setStoreId(request.getStoreId());
         order.setCustomerId(request.getCustomerId());
-        List<OrderItem> orderItems = request.getOrderItems().stream()
-                .map(item -> toOrderItem(item, order, index.getAndIncrement()))
+        List<OrderItem> orderItems = IntStream
+                .range(0, request.getOrderItems().size())
+                .mapToObj(i -> toOrderItem(
+                        request.getOrderItems().get(i),
+                        order,
+                        i + 1
+                ))
                 .toList();
         order.setOrderItems(orderItems);
         return order;

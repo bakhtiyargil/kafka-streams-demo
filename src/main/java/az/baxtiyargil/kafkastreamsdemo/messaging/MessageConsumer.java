@@ -1,6 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging.ConsumerFunctionNames;
+import az.baxtiyargil.kafkastreamsdemo.messaging.component.ConsumerErrorWrapper;
 import az.baxtiyargil.kafkastreamsdemo.messaging.event.OrderCreatedEvent;
 import az.baxtiyargil.kafkastreamsdemo.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
-import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -17,13 +17,14 @@ public class MessageConsumer {
 
     private static final String LOG_FORMAT = "Received event: {}, payload: {}";
     private final OrderService orderService;
+    private final ConsumerErrorWrapper consumerErrorWrapper;
 
     @Bean(ConsumerFunctionNames.ORDER_CREATED_EVENT_CONSUMER)
-    public Consumer<Message<OrderCreatedEvent>> onOrderCreatedEvent() {
-        return message -> {
+    public TracingEventConsumer<Message<OrderCreatedEvent>> onOrderCreatedEvent() {
+        return consumerErrorWrapper.wrap(message -> {
             log.info(LOG_FORMAT, message.getPayload().getType(), message.getPayload());
-            orderService.updateInventory(message.getPayload().id());
-        };
+            orderService.updateInventory(message.getPayload().getPayload().orderId());
+        });
     }
 
 }
