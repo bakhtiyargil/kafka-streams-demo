@@ -13,6 +13,9 @@ import java.util.function.BiFunction;
 import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging;
 import org.springframework.lang.NonNull;
 
+/**
+ * If a binding or listener is created for the DLT, this class will handle and control the retry logic for DLT messages.
+ */
 @Slf4j
 public class RetryDeadLetterPublishingRecoverer extends DeadLetterPublishingRecoverer {
 

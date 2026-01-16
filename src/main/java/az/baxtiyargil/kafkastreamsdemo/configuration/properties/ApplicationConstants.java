@@ -13,7 +13,7 @@ public final class ApplicationConstants {
         public static final String HEADER_X_EVENT_TYPE = "X-Event-Type";
         public static final String HEADER_X_TRACE_ID = "X-Trace-Id";
         public static final String ROUTER_BINDING_SUFFIX = "Router-in-";
-        public static final String HEADER_X_RETRY_REASON = "X-Retry-REASON";
+        public static final String HEADER_X_RETRY_REASON = "X-Retry-Reason";
 
         private Messaging() {
         }

@@ -1,14 +1,12 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging.component;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.tracing.TraceContext;
-import az.baxtiyargil.kafkastreamsdemo.messaging.event.DomainEvent;
+import az.baxtiyargil.kafkastreamsdemo.utility.MessagingUtility;
 import org.springframework.cloud.function.context.catalog.FunctionAroundWrapper;
 import org.springframework.cloud.function.context.catalog.SimpleFunctionRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
-import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging.HEADER_X_TRACE_ID;
 
 @Configuration
 public class TracingFunctionWrapper {
@@ -21,22 +19,15 @@ public class TracingFunctionWrapper {
                 String traceId = null;
                 Message<?> message;
                 if (input instanceof Message<?> msg) {
-                    traceId = msg.getHeaders().get(HEADER_X_TRACE_ID, String.class);
                     message = msg;
-                    if ((traceId == null) && (message instanceof DomainEvent event)) {
-                        traceId = event.getTraceId();
-                        message = MessageBuilder.fromMessage(message).setHeader(HEADER_X_TRACE_ID, traceId).build();
-                    }
-                } else {
-                    message = MessageBuilder.withPayload(input).build();
-                }
-                if (traceId == null) {
-                    traceId = TraceContext.getTraceId();
-                    message = MessageBuilder.fromMessage(message).setHeader(HEADER_X_TRACE_ID, traceId).build();
-                } else {
+                    traceId = MessagingUtility.extractTraceId(message);
                     TraceContext.clearTraceId();
+                    TraceContext.setTraceId(traceId);
+                } else {
+                    message = MessagingUtility.toMessage(input);
                 }
-                TraceContext.setTraceId(traceId);
+
+                message = MessagingUtility.withTraceId(message, traceId);
                 return targetFunction.apply(message);
             }
         };
