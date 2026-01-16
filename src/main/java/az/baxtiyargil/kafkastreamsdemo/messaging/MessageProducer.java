@@ -32,10 +32,13 @@ public class MessageProducer {
         var messageKey = message.getHeaders().getOrDefault(KafkaHeaders.RECEIVED_KEY, "");
 
         String outputChannel = null;
+        EventType eventType;
         if (message.getPayload() instanceof DomainEvent event) {
-            var eventType = EventType.of(event.getType());
+            eventType = EventType.of(event.getType());
             outputChannel = eventType.getOutputChannelName();
+            log.info("Sending retry event: {}, payload: {} ", event.getType(), event);
         }
+
         Message<?> retryMessage = MessageBuilder.fromMessage(message)
                 .setHeader(Messaging.HEADER_X_RETRY_COUNT, ++retryCount)
                 .setHeader(Messaging.HEADER_X_RETRY_REASON, throwable.getMessage())
