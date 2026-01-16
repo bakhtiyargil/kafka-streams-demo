@@ -38,7 +38,7 @@ public class MessageProducer {
         }
         Message<?> retryMessage = MessageBuilder.fromMessage(message)
                 .setHeader(Messaging.HEADER_X_RETRY_COUNT, ++retryCount)
-                .setHeader(Messaging.HEADER_X_RETRY_REASON, throwable.getClass().getSimpleName())
+                .setHeader(Messaging.HEADER_X_RETRY_REASON, throwable.getMessage())
                 .setHeader(KafkaHeaders.KEY, messageKey)
                 .build();
         streamBridge.send(outputChannel, retryMessage);
