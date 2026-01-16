@@ -30,14 +30,7 @@ public class MessageProducer {
     public <T extends DomainEvent> void sendRetryEvent(Message<?> message, Throwable throwable) {
         int retryCount = (Integer) message.getHeaders().getOrDefault(Messaging.HEADER_X_RETRY_COUNT, 0);
         var messageKey = message.getHeaders().getOrDefault(KafkaHeaders.RECEIVED_KEY, "");
-
-        String outputChannel = null;
-        EventType eventType;
-        if (message.getPayload() instanceof DomainEvent event) {
-            eventType = EventType.of(event.getType());
-            outputChannel = eventType.getOutputChannelName();
-            log.info("Sending retry event: {}, payload: {} ", event.getType(), event);
-        }
+        var outputChannel = getOutputChannelName(message);
 
         Message<?> retryMessage = MessageBuilder.fromMessage(message)
                 .setHeader(Messaging.HEADER_X_RETRY_COUNT, ++retryCount)
@@ -45,5 +38,15 @@ public class MessageProducer {
                 .setHeader(KafkaHeaders.KEY, messageKey)
                 .build();
         streamBridge.send(outputChannel, retryMessage);
+    }
+
+    private String getOutputChannelName(Message<?> message) {
+        String outputChannel = null;
+        if (message.getPayload() instanceof DomainEvent event) {
+            EventType eventType = EventType.of(event.getType());
+            outputChannel = eventType.getOutputChannelName();
+            log.info("Sending retry event: {}, payload: {} ", event.getType(), event);
+        }
+        return outputChannel;
     }
 }
