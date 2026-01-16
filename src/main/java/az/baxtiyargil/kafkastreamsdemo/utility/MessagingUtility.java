@@ -1,5 +1,6 @@
 package az.baxtiyargil.kafkastreamsdemo.utility;
 
+import az.baxtiyargil.kafkastreamsdemo.configuration.tracing.TraceContext;
 import az.baxtiyargil.kafkastreamsdemo.messaging.event.DomainEvent;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -25,6 +26,9 @@ public final class MessagingUtility {
             return traceId;
         }
 
+        if (traceId == null) {
+            traceId = TraceContext.getTraceId();
+        }
         return traceId;
     }
 
