@@ -21,22 +21,24 @@ public class TracingFunctionWrapper {
                 String traceId = null;
                 Message<?> message;
                 if (input instanceof Message<?> msg) {
-                    traceId = msg.getHeaders().get(HEADER_X_TRACE_ID, String.class);
                     message = msg;
-                    if ((traceId == null) && (message instanceof DomainEvent event)) {
+                    traceId = msg.getHeaders().get(HEADER_X_TRACE_ID, String.class);
+
+                    if (traceId == null && msg.getPayload() instanceof DomainEvent event) {
                         traceId = event.getTraceId();
-                        message = MessageBuilder.fromMessage(message).setHeader(HEADER_X_TRACE_ID, traceId).build();
+                    }
+
+                    if (traceId == null) {
+                        traceId = TraceContext.getTraceId();
+                    } else {
+                        TraceContext.clearTraceId();
+                        TraceContext.setTraceId(traceId);
                     }
                 } else {
                     message = MessageBuilder.withPayload(input).build();
                 }
-                if (traceId == null) {
-                    traceId = TraceContext.getTraceId();
-                    message = MessageBuilder.fromMessage(message).setHeader(HEADER_X_TRACE_ID, traceId).build();
-                } else {
-                    TraceContext.clearTraceId();
-                }
-                TraceContext.setTraceId(traceId);
+
+                message = MessageBuilder.fromMessage(message).setHeader(HEADER_X_TRACE_ID, traceId).build();
                 return targetFunction.apply(message);
             }
         };
