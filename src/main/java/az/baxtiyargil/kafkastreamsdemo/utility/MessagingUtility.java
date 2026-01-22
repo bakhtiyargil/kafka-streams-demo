@@ -1,7 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.utility;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.tracing.TraceContext;
-import az.baxtiyargil.kafkastreamsdemo.messaging.event.DomainEvent;
+import az.baxtiyargil.kafkastreamsdemo.messaging.event.Event;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import static az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging.HEADER_X_TRACE_ID;
@@ -21,7 +21,7 @@ public final class MessagingUtility {
     public static String extractTraceId(Message<?> message) {
         String traceId = message.getHeaders().get(HEADER_X_TRACE_ID, String.class);
 
-        if (traceId == null && message.getPayload() instanceof DomainEvent event) {
+        if (traceId == null && message.getPayload() instanceof Event event) {
             traceId = event.getTraceId();
             return traceId;
         }

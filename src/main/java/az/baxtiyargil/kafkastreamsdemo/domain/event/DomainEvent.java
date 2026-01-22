@@ -1,4 +1,4 @@
-package az.baxtiyargil.kafkastreamsdemo.messaging.event;
+package az.baxtiyargil.kafkastreamsdemo.domain.event;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -7,13 +7,9 @@ public interface DomainEvent {
 
     UUID getEventId();
 
-    String getType();
-
     String getAggregateId();
 
-    LocalDateTime getCreatedAt();
-
-    LocalDateTime getTtl();
+    LocalDateTime getOccurredAt();
 
     String getTraceId();
 

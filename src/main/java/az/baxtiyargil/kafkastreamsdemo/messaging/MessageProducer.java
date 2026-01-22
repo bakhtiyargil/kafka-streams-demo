@@ -1,7 +1,7 @@
 package az.baxtiyargil.kafkastreamsdemo.messaging;
 
 import az.baxtiyargil.kafkastreamsdemo.configuration.properties.ApplicationConstants.Messaging;
-import az.baxtiyargil.kafkastreamsdemo.messaging.event.DomainEvent;
+import az.baxtiyargil.kafkastreamsdemo.messaging.event.Event;
 import az.baxtiyargil.kafkastreamsdemo.messaging.event.EventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class MessageProducer {
 
     private final StreamBridge streamBridge;
 
-    public <T extends DomainEvent> void sendOrderEvent(T event) {
+    public <T extends Event<?>> void sendOrderEvent(T event) {
         log.info("Sending event: {}, payload: {} ", event.getType(), event);
         Message<T> message = MessageBuilder.withPayload(event)
                 .setHeader(Messaging.HEADER_X_EVENT_TYPE, event.getType())
@@ -27,7 +27,7 @@ public class MessageProducer {
         streamBridge.send(Messaging.OutputChannel.ORDER, message);
     }
 
-    public <T extends DomainEvent> void sendRetryEvent(Message<?> message, Throwable throwable) {
+    public <T extends Event<?>> void sendRetryEvent(Message<?> message, Throwable throwable) {
         int retryCount = (Integer) message.getHeaders().getOrDefault(Messaging.HEADER_X_RETRY_COUNT, 0);
         var messageKey = message.getHeaders().getOrDefault(KafkaHeaders.RECEIVED_KEY, "");
         var outputChannel = getOutputChannelName(message);
@@ -42,7 +42,7 @@ public class MessageProducer {
 
     private String getOutputChannelName(Message<?> message) {
         String outputChannel = null;
-        if (message.getPayload() instanceof DomainEvent event) {
+        if (message.getPayload() instanceof Event<?> event) {
             EventType eventType = EventType.of(event.getType());
             outputChannel = eventType.getOutputChannelName();
             log.info("Sending retry event: {}, payload: {} ", event.getType(), event);
