@@ -27,7 +27,7 @@ public class MessageProducer {
         streamBridge.send(Messaging.OutputChannel.ORDER, message);
     }
 
-    public <T extends Event<?>> void sendRetryEvent(Message<?> message, Throwable throwable) {
+    public void sendRetryEvent(Message<?> message, Throwable throwable) {
         int retryCount = (Integer) message.getHeaders().getOrDefault(Messaging.HEADER_X_RETRY_COUNT, 0);
         var messageKey = message.getHeaders().getOrDefault(KafkaHeaders.RECEIVED_KEY, "");
         var outputChannel = getOutputChannelName(message);
