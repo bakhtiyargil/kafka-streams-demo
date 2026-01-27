@@ -9,8 +9,6 @@ import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationErrorCodes;
 import az.baxtiyargil.kafkastreamsdemo.error.exception.ApplicationException;
 import az.baxtiyargil.kafkastreamsdemo.mapper.OrderMapper;
 import az.baxtiyargil.kafkastreamsdemo.messaging.DomainEventPublisher;
-import az.baxtiyargil.kafkastreamsdemo.messaging.MessageProducer;
-import az.baxtiyargil.kafkastreamsdemo.messaging.event.OrderCreatedEvent;
 import az.baxtiyargil.kafkastreamsdemo.model.CreateOrderRequest;
 import az.baxtiyargil.kafkastreamsdemo.repository.InventoryRepository;
 import az.baxtiyargil.kafkastreamsdemo.repository.OrderRepository;
